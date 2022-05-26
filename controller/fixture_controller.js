@@ -2,7 +2,7 @@ const Fixture = require("../model/fixture_model");
 
 exports.fixtureUpdate = async (req, res, next) => {
   const id = req.params.id;
-  const { t1_score, t2_score, events, minutes, status } = req.body;
+  const { t1_score, t2_score, events, minutes, status,time } = req.body;
   try {
     const fixture_instance = await Fixture.findOne({ _id: id });
     if (fixture_instance) {
@@ -12,6 +12,7 @@ exports.fixtureUpdate = async (req, res, next) => {
       fixture_instance.status = status;
       fixture_instance.score = `${t1_score}-${t2_score}`;
       if (events) fixture_instance.events.push(events);
+      fixture_instance.time = new Date(time)
       await fixture_instance.save();
     } else {
       res.send("Fixture not found");
