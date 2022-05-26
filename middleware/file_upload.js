@@ -15,6 +15,7 @@ const MIME_TYPE_MAP = {
         },
         filename:(req,file,cb)=>{
             const ext = MIME_TYPE_MAP[file.mimetype]
+            await sharp(path).resize(200, 200).jpeg({ quality: 50 }).toFile(thumbnail_dir);
             cb(null,uuid.v1()+"."+ext)
            
         },
