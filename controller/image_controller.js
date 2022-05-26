@@ -1,6 +1,7 @@
-const Image = require("../model/image_upload_model");
+const Image = require("../model/image_upload");
 const sharp = require("sharp");
 const uuid = require("uuid");
+const HttpError = require("../model/http_error");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -9,7 +10,11 @@ const MIME_TYPE_MAP = {
 };
 
 exports.uploadImage = async (req, res, next) => {
-  console.log(req.file);
+  // console.log(req.file);
+  if(!req.file) {
+    const error= new HttpError("Couldn't get the file, Please upload again.",404)
+    return next(error)
+  }
   try {
     const thumbnail_dir = "upload/images/" + uuid.v1() +"."+ MIME_TYPE_MAP[req.file.mimetype]
     console.log(thumbnail_dir)
@@ -20,9 +25,10 @@ exports.uploadImage = async (req, res, next) => {
       thumbnail: thumbnail_dir,
     });
     await image.save();
-    res.json("uploaded succesfully.");
-  } catch (error) {
-    console.log(error);
-    res.json("error");
+   
+  } catch {
+    const error = new HttpError("Failed to upload images, Please try again later",500)
+    return next(error)
   }
+  res.status(200).json("uploaded succesfully.");
 };

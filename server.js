@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const router = require("./routes/index_route");
 const mongoose = require("mongoose");
+const HttpError = require("./model/http_error");
+const fs = require('fs')
 
 app.use(bodyParser.json());
 
@@ -17,6 +19,24 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", router);
+
+app.use((req, res, next) => {
+  error = new HttpError("Page not found", 404);
+  throw error;
+});
+
+app.use((error, req, res, next) => {
+  if(req.file){
+    fs.unlink(req.file.path,(err)=>{
+      // console.log(err,'hisasa')
+    })
+  }
+  if (res.headerSent) {
+    return next(error);
+  }
+  res.status(error.code || 500);
+  res.json({ message: error.message || "unknown error occured" });
+});
 
 mongoose
   .connect(

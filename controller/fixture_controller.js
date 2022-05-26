@@ -1,4 +1,5 @@
-const Fixture = require("../model/fixture_model");
+const Fixture = require("../model/fixture");
+const HttpError = require("../model/http_error");
 
 exports.fixtureUpdate = async (req, res, next) => {
   const id = req.params.id;
@@ -15,11 +16,12 @@ exports.fixtureUpdate = async (req, res, next) => {
       fixture_instance.time = new Date(time)
       await fixture_instance.save();
     } else {
-      res.send("Fixture not found");
+      const error = new HttpError("Couldn't find fixture with the given id.",404);
+      return next(error)
     }
-    res.send("done");
-  } catch (error) {
-    console.log(error);
-    res.send("error");
+  } catch (err) {
+    const error = new HttpError("Updating fixture failed. Please try again later",500)
+    return next(error)
   }
+  res.status(200).json("Successfully updated fixture.")
 };
