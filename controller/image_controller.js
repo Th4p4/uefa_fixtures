@@ -1,12 +1,6 @@
 const Image = require("../model/image_upload_model");
 const sharp = require("sharp");
-const paths = require("path");
 
-const MIME_TYPE_MAP = {
-  "image/png": "png",
-  "image/jpg": "jpg",
-  "image/jpeg": "jpeg",
-};
 
 exports.uploadImage = async (req, res, next) => {
   const { path, destination, filename } = req.file;
