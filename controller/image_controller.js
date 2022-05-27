@@ -24,7 +24,9 @@ exports.uploadImage = async (req, res, next) => {
     const image = new Image({
       thumbnail: thumbnail_dir,
     });
+    console.log('thapa')
     await image.save();
+    console.log('sandeep')
    
   } catch {
     const error = new HttpError("Failed to upload images, Please try again later",500)

@@ -1,6 +1,7 @@
 const Group = require("../model/group");
 const HttpError = require("../model/http_error");
 const Team = require("../model/team");
+const { shuffleArray } = require("../utils/shuffle");
 const ObjectId = require("mongodb").ObjectID;
 
 module.exports = async (req, res, next) => {
@@ -19,7 +20,7 @@ module.exports = async (req, res, next) => {
         },
       },
     ]);
-    req.team = team;
+    req.team = shuffleArray(team);
     next();
   } catch (error) {
     const err = new HttpError(

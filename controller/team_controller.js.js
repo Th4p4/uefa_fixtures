@@ -4,6 +4,7 @@ const Group = require("../model/group");
 
 const shuffleArray = require("../utils/shuffle");
 const HttpError = require("../model/http_error");
+const team = require("../model/team");
 
 exports.pushTeam = async (req, res, next) => {
   if (!db.database) {
@@ -54,6 +55,8 @@ exports.getTeams = async (req, res, next) => {
   let teams;
   try {
     teams = await Team.find({});
+    console.log(teams)
+    console.log("hero")
   } catch (err) {
     // throw new HttpError(
     //   "Failed to get teams, Please try again later",

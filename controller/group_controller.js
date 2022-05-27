@@ -2,6 +2,7 @@ const Group = require("../model/group");
 const { shuffleArray } = require("../utils/shuffle");
 const Fixture = require("../model/fixture");
 const HttpError = require("../model/http_error");
+const Date = require("../model/date");
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -47,37 +48,68 @@ exports.updateGroup = async (req, res, next) => {
 
 exports.getGroupTeams = async (req, res, next) => {
   try {
-    res.status(200).json({teams:req.team});
+    res.status(200).json({ teams: req.team });
   } catch (err) {
-    const error = new HttpError("Failed to get group teams, Please try again later",500)
-    return next(error)
+    const error = new HttpError(
+      "Failed to get group teams, Please try again later",
+      500
+    );
+    return next(error);
   }
 };
 
 exports.createfixtureFromGroups = async (req, res, next) => {
   const team = req.team;
+  const startDate = new Date(2022, 06, 28);
+  const endDate = new Date(2022, 07, 20);
   const fixture = [];
-  console.log(team);
+  // console.log(team);
   try {
     if (team) {
+      let count = 0;
+      let home_match = new Date(+startDate);
+      let away_match = new Date(+startDate);
+      away_match = away_match.addDays(5);
       for (let i = 0; i < team.length; i++) {
         for (let j = i + 1; j < team.length; j++) {
+          if (count == 2) {
+            count = 0;
+            home_match = home_match.addDays(1);
+            away_match = away_match.addDays(1);
+          }
+          console.log("here", count);
+          console.log(home_match.addHours(5), away_match);
           const game_instance = `${team[i].name} vs ${team[j].name}`;
           const createFixture = new Fixture({
             team1: team[i]._id,
             team2: team[j]._id,
+            home_match:home_match.addHours(5),
+            away_match:away_match.addHours(5),
           });
           await createFixture.save();
           fixture.push(game_instance);
+          count += 1;
         }
       }
     }
   } catch (err) {
-    const error = new HttpError("Failed to create fixtures, Please try again later",500)
-    return next(error)
+    console.log(err);
+    const error = new HttpError(
+      "Failed to create fixtures, Please try again later",
+      500
+    );
+    return next(error);
   }
-  res.status(201).json({fixtures:fixture})
+  res.status(201).json({ fixtures: fixture });
 };
+
+// exports.check =(req,res,next)=>{
+//   const date = new Date()
+//   date.addDays(4)
+//   console.log(date)
+//   res.json('hi')
+
+// }
 
 // exports.cgr = setTimeout(async (req, res, next) => {
 //   const team = req.team;
