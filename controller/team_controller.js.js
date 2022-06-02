@@ -31,17 +31,30 @@ exports.pushTeam = async (req, res, next) => {
 };
 
 exports.assignGroup = async (req, res, next) => {
+  const id = req.params.id
+  const {group} = req.body
+  console.log(group)
+  if (!id&&!group){
+    const error = new HttpError(
+      "Couldn't get group name and id.",
+      404
+    );
+    return next(error)
+  }
   try {
-    let team;
-    team = await Team.find();
-    const groups = await Group.find();
-    team.forEach(async (obj, i) => {
-      i < 6 ? (obj.group = groups[0]._id) : (obj.group = groups[1]._id);
-      await obj.save();
-      // obj.populate('group')
-    });
+    let team,groups;
+    team = await Team.findOne({_id:id});
+    groups = await Group.findOne({name:group})
+    // team.forEach(async (obj, i) => {
+    //   i < 6 ? (obj.group = groups[0]._id) : (obj.group = groups[1]._id);
+    //   await obj.save();
+    //   // obj.populate('group')
+    // });
+    team.group = groups._id
+    await team.save()
     // console.log(team);
   } catch (err) {
+    console.log(err,'err ho hai')
     const error = new HttpError(
       "Failed to assign groups to teams, Please try again later",
       500
@@ -55,8 +68,8 @@ exports.getTeams = async (req, res, next) => {
   let teams;
   try {
     teams = await Team.find({});
-    console.log(teams)
-    console.log("hero")
+    // console.log(teams)
+    // console.log("hero")
   } catch (err) {
     // throw new HttpError(
     //   "Failed to get teams, Please try again later",

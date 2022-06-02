@@ -12,7 +12,7 @@ const team_controller = require('../controller/team_controller.js')
 // router.get('/random',random_controller.randomTeams)
 router.put('/',team_controller.pushTeam)
 router.get('/',team_controller.getTeams)
-router.put('/assign',team_controller.assignGroup)
+router.put('/assign/:id',team_controller.assignGroup)
 
 
 module.exports = router
